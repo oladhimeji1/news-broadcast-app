@@ -1,6 +1,12 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+     "jsx": "react-jsx",      // or "react-native" for RN projects
+    "allowJs": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "esnext",
+    "moduleResolution": "node",
     "strict": true,
     "paths": {
       "@/*": [
