@@ -17,7 +17,7 @@ import styles from '@/components/home/styles';
 import useRadiocult from '@/hooks/useRadiocult';
 
 interface DataType {
-  id: number;
+  id: number | string;
   title: string;
   image: string;
   streamUrl: string;
@@ -29,15 +29,13 @@ interface DataType {
   endTime?: string;
 }
 
-
-// All UI data now comes from the Radiocult API via `useRadiocult`.
-
 const NewsApp = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isConnected, setIsConnected] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [currentStream, setCurrentStream] = useState('https://refwordfm.radiocult.fm/stream');
+
   const EMPTY_NOW_PLAYING = {
     id: 0,
     title: '',
@@ -50,74 +48,76 @@ const NewsApp = () => {
     listeners: '0',
     description: '',
   } as any;
+
   const [nowPlaying, setNowPlaying] = useState<any>(EMPTY_NOW_PLAYING);
   const [showSchedule, setShowSchedule] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [currentAnnouncementIndex, setCurrentAnnouncementIndex] = useState(0);
-  // chat and volume not yet wired to UI components (kept for future use)
   const [notifications, setNotifications] = useState(true);
   const [backgroundPlay, setBackgroundPlay] = useState(true);
 
   const player = useAudioPlayer(currentStream);
 
-  // Radiocult live metadata (attempt sync with web embed)
-  // useRadiocult returns { data, loading, error, refresh }
-  const { data: rcData, error: rcError } = useRadiocult('refwordfm', { apiKey: "pk_11730d4c647a423bb05f8080a8088c6c" });
+  // Radiocult hook
+  const { data: rcData, error: rcError } = useRadiocult('refwordfm', {
+    apiKey: "pk_11730d4c647a423bb05f8080a8088c6c"
+  });
 
-  // keep a local recentPlaylists state populated from Radiocult API
   const [recentPlaylists, setRecentPlaylists] = useState<any[]>([]);
   const [announcements, setAnnouncements] = useState<any[]>([]);
 
-  // Merge radiocult data into state when available
+  // Map rcData to our state
   useEffect(() => {
     if (!rcData) return;
-    console.log('Radiocult data:', rcData);
+    // console.log('::::::::::::::::::::::::::::::::::::::::::::::::');
+    // console.log("Newwwwww:", JSON.stringify(rcData, null, 2));
 
-    // if Radiocult provided a stream, update currentStream
-    if (rcData.streamUrl) {
-      setCurrentStream(rcData.streamUrl);
-    }
+    const result = (rcData as any)?.raw?.result || {};
+    const schedule = result.content || {};
+    const metadata = result.metadata || {};
 
-    // update nowPlaying metadata (title/image/listeners) but preserve existing fields
+    // Stream URL fallback
+    const streamUrl = rcData.streamUrl || 'https://refwordfm.radiocult.fm/stream';
+    setCurrentStream(streamUrl);
+
+    // nowPlaying info
     setNowPlaying((prev: any) => ({
       ...prev,
-      title: rcData.title || rcData.name || prev.title,
-      subtitle: rcData.subtitle || prev.subtitle,
-      image: rcData.image || prev.image || '',
-      streamUrl: rcData.streamUrl || prev.streamUrl || '',
-      description: rcData.description || prev.description || '',
+      title: metadata.title || schedule.title || prev.title,
+      subtitle: metadata.album || prev.subtitle,
+      image: metadata.artwork?.default || prev.image || '',
+      streamUrl,
+      description: metadata.filename || prev.description || '',
       listeners: rcData.listeners || prev.listeners,
-    } as any));
+      show: schedule.title || '',
+      host: metadata.artist || '',
+      startTime: schedule.startDateUtc,
+      endTime: schedule.endDateUtc,
+    }));
 
-    // Prefer playlists, otherwise channels
-    const sourceItems = Array.isArray(rcData.playlists) && rcData.playlists.length > 0
-      ? rcData.playlists
-      : Array.isArray(rcData.channels) && rcData.channels.length > 0
-        ? rcData.channels
-        : [];
+    // Build one-item playlist from schedule
+    // const mapped = [{
+    //   id: schedule.id,
+    //   title: schedule.title,
+    //   subtitle: metadata.title,
+    //   image: metadata.artwork?.default || '',
+    //   streamUrl,
+    //   isLive: result.status === "schedule",
+    //   show: schedule.entity || '',
+    //   host: metadata.artist || '',
+    //   startTime: schedule.startDateUtc,
+    //   endTime: schedule.endDateUtc,
+    // }];
 
-    if (sourceItems.length > 0) {
-      const mapped = sourceItems.map((p: any, idx: number) => ({
-        id: p.id || idx + 1000,
-        title: p.title || p.name || p.show || `Program ${idx + 1}`,
-        subtitle: p.subtitle || p.description || '',
-        image: p.image || p.artwork || p.thumbnail || rcData.image || '',
-        streamUrl: p.streamUrl || p.streamingUrl || p.stream_url || p.stream || rcData.streamUrl || currentStream,
-        isLive: !!p.isLive || !!p.is_live || false,
-        show: p.show || p.name || '',
-        host: p.host || p.presenter || '',
-        startTime: p.startTime || p.start_time || undefined,
-        endTime: p.endTime || p.end_time || undefined,
-      }));
-      setRecentPlaylists(mapped as any);
-    }
+    // setRecentPlaylists(mapped);
 
-    // announcements may live on raw payload or top-level
-    const rawAnnouncements = (rcData as any)?.raw?.announcements || (rcData as any)?.announcements || [];
+    // announcements
+    const rawAnnouncements =
+      (rcData as any)?.raw?.announcements || (rcData as any)?.announcements || [];
     setAnnouncements(rawAnnouncements);
-  }, [rcData, currentStream]);
+  }, [rcData]);
 
-  // Show fetch errors from useRadiocult
+  // Show fetch errors
   useEffect(() => {
     if (rcError) {
       console.warn('useRadiocult error:', rcError);
@@ -125,16 +125,18 @@ const NewsApp = () => {
     }
   }, [rcError]);
 
-  // Auto-scroll announcements (from API)
+  // Auto-scroll announcements
   useEffect(() => {
     if (!announcements || announcements.length === 0) return;
     const interval = setInterval(() => {
-      setCurrentAnnouncementIndex((prev) => (prev + 1) % announcements.length);
+      setCurrentAnnouncementIndex(
+        (prev) => (prev + 1) % announcements.length
+      );
     }, 4000);
     return () => clearInterval(interval);
   }, [announcements]);
 
-  // Clean up when unmounting
+  // Cleanup
   useEffect(() => {
     return () => {
       if (player) {
@@ -143,7 +145,7 @@ const NewsApp = () => {
     };
   }, [player]);
 
-  // Handle play / pause
+  // Play / Pause
   const handlePlayPause = async () => {
     try {
       if (!isPlaying) {
@@ -160,50 +162,43 @@ const NewsApp = () => {
     }
   };
 
-  // Handle mute / unmute
+  // Mute toggle
   const handleVolumeToggle = async () => {
-    if (!player) return; // make sure player is loaded
-
-      player.muted = !isMuted;
-
+    if (!player) return;
+    player.muted = !isMuted;
     setIsMuted(!isMuted);
   };
 
-  // Handle stream change
+  // Change stream
   const changeStream = async (streamUrl: string, title: DataType) => {
     try {
       if (isPlaying) {
         await player.pause();
         setIsPlaying(false);
       }
-
       setCurrentStream(streamUrl);
-      // preserve listeners if present in current state
       setNowPlaying({
         ...title,
         listeners: (nowPlaying && (nowPlaying as any).listeners) || '0'
       });
-
-      // Alert.alert("Stream Changed", `Now tuned to: ${title.title}`);
     } catch (error) {
       console.error('changeStream error', error);
       Alert.alert("Error", "Unable to change stream");
     }
   };
 
-  // Share functionality
+  // Share
   const handleShare = async () => {
     try {
       const result = await Share.share({
         message:
           "🎶 Check out RefWord FM!\n\nListen live at: https://refwordfm.radiocult.fm/stream",
-        url: "https://refwordfm.radiocult.fm/stream", // iOS uses url too
+        url: "https://refwordfm.radiocult.fm/stream",
         title: "RefWord FM Radio",
       });
 
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
-          // Shared with specific activity (e.g. WhatsApp, Twitter)
           console.log("Shared via", result.activityType);
         } else {
           console.log("Shared successfully");
@@ -216,13 +211,13 @@ const NewsApp = () => {
     }
   };
 
-  // Set reminder for program
-  const setReminder = (program: any) => {
-    Alert.alert(
-      "Reminder Set", 
-      `You'll be notified before "${program.show}" starts at ${program.time}`
-    );
-  };
+  // Reminder
+  // const setReminder = (program: any) => {
+  //   Alert.alert(
+  //     "Reminder Set",
+  //     `You'll be notified before "${program.show}" starts at ${program.time}`
+  //   );
+  // };
 
   // Refresh
   const onRefresh = () => {
@@ -234,27 +229,43 @@ const NewsApp = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-      
+
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        <Header greeting={rcData?.name || rcData?.title || 'RefWord FM'} onShare={handleShare} onOpenSettings={() => setShowSettings(true)} />
+        <Header
+          greeting='RefWord FM'
+          onShare={handleShare}
+          onOpenSettings={() => setShowSettings(true)}
+        />
 
         {announcements && announcements.length > 0 ? (
-          <AnnouncementTicker text={(announcements[currentAnnouncementIndex] && (announcements[currentAnnouncementIndex].text || announcements[currentAnnouncementIndex].message || announcements[currentAnnouncementIndex].title)) || ''} />
-        ) : rcData?.description ? (
-          <AnnouncementTicker text={rcData.description} />
+          <AnnouncementTicker
+            text={
+              (announcements[currentAnnouncementIndex] &&
+                (announcements[currentAnnouncementIndex].text ||
+                  announcements[currentAnnouncementIndex].message ||
+                  announcements[currentAnnouncementIndex].title)) ||
+              ''
+            }
+          />
+        ) : nowPlaying.description ? (
+          <AnnouncementTicker text={nowPlaying.description} />
         ) : null}
 
-        <ListenLive isPlaying={isPlaying} listeners={nowPlaying.listeners} onTogglePlay={handlePlayPause} />
+        <ListenLive
+          isPlaying={isPlaying}
+          listeners={nowPlaying.listeners}
+          onTogglePlay={handlePlayPause}
+        />
 
-  <RecentPlaylists playlists={recentPlaylists} onSelect={changeStream} onViewSchedule={() => setShowSchedule(true)} />
+        <RecentPlaylists onPress={() => { setShowSchedule(true); }} />
 
         <NowPlaying data={nowPlaying} />
 
-  <FeaturedPodcasts podcasts={recentPlaylists.slice(0, 4)} onSelect={changeStream} />
+        <FeaturedPodcasts />
       </ScrollView>
 
       <BottomPlayer
@@ -265,22 +276,21 @@ const NewsApp = () => {
         onToggleMute={handleVolumeToggle}
         onInfo={() => {
           const parts = [
-            rcData?.name || rcData?.title || 'RefWord FM',
-            rcData?.edition ? `Edition: ${rcData.edition}` : undefined,
-            rcData?.country ? `Country: ${Array.isArray(rcData.country) ? rcData.country.join(', ') : rcData.country}` : undefined,
-            rcData?.donationLink ? `Donate: ${rcData.donationLink}` : undefined,
-            rcData?.favouritedCount ? `Favorites: ${rcData.favouritedCount}` : undefined,
-            rcData?.socials ? `Socials: ${JSON.stringify(rcData.socials)}` : undefined,
-            `Now: ${nowPlaying.show || nowPlaying.title || ''}`,
+            nowPlaying.show || nowPlaying.title || 'RefWord FM',
             nowPlaying.host ? `Host: ${nowPlaying.host}` : undefined,
-            `Listeners: ${nowPlaying.listeners || rcData?.listeners || '0'}`,
+            `Listeners: ${nowPlaying.listeners || '0'}`,
+            nowPlaying.startTime ? `Start: ${nowPlaying.startTime}` : undefined,
+            nowPlaying.endTime ? `End: ${nowPlaying.endTime}` : undefined,
           ].filter(Boolean).join('\n');
 
           Alert.alert('Station Info', parts);
         }}
       />
 
-  <ScheduleModal visible={showSchedule} onClose={() => setShowSchedule(false)} schedule={(rcData as any)?.raw?.schedule || (rcData as any)?.schedule || []} onSetReminder={setReminder} />
+      <ScheduleModal
+        visible={showSchedule}
+        onClose={() => setShowSchedule(false)}
+      />
 
       <SettingsModal
         visible={showSettings}

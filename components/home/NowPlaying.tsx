@@ -22,15 +22,15 @@ const NowPlaying: React.FC<Props> = ({ data }) => (
     <View style={styles.nowPlayingCard}>
       <Image source={{ uri: data.image }} style={styles.nowPlayingImage} />
       <View style={styles.nowPlayingOverlay}>
-        <View style={styles.nowPlayingHeader}>
+        {/* <View style={styles.nowPlayingHeader}>
           {data.isLive && (
             <View style={styles.liveIndicator}>
               <View style={styles.liveDot} />
               <Text style={styles.liveText}>LIVE</Text>
             </View>
           )}
-          <Text style={styles.listenerCount}>👥 {data.listeners}</Text>
-        </View>
+          {/* <Text style={styles.listenerCount}>👥 {data.listeners}</Text> 
+        </View> */}
         <View style={styles.nowPlayingInfo}>
           <Text style={styles.nowPlayingTitle}>{data.title}</Text>
           <Text style={styles.nowPlayingSubtitle}>{data.subtitle}</Text>

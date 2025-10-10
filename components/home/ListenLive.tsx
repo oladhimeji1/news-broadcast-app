@@ -15,7 +15,7 @@ const ListenLive: React.FC<Props> = ({ isPlaying, listeners = '0', onTogglePlay 
       <Ionicons name={isPlaying ? 'pause-circle' : 'play-circle'} size={32} color="#fff" style={styles.listenLiveIcon} />
       <View style={styles.listenLiveTextContainer}>
         <Text style={styles.listenLiveText}>{isPlaying ? 'LIVE NOW' : 'LISTEN LIVE'}</Text>
-        <Text style={styles.listenLiveSubtext}>{listeners} listeners</Text>
+        {/* <Text style={styles.listenLiveSubtext}>{listeners} listeners</Text> */}
       </View>
     </TouchableOpacity>
   </View>

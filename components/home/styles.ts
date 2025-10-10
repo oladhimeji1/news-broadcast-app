@@ -118,14 +118,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   playlistItem: {
-    marginRight: 15,
+    // marginRight: 5,
     alignItems: 'center',
     width: 90,
   },
   playlistImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 70,
+    height: 70,
+    borderRadius: 50,
     marginBottom: 8,
   },
   playlistInfo: {
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   nowPlayingCard: {
     borderRadius: 12,
     overflow: 'hidden',
-    height: 180,
+    height: 300,
     position: 'relative',
   },
   nowPlayingImage: {
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
     padding: 15,
   },
   nowPlayingHeader: {
@@ -327,37 +327,38 @@ const styles = StyleSheet.create({
   // Modal Styles
   modalContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
+    padding: 16,
+    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#e0e0e0',
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: '#333',
   },
 
   // Schedule Modal
   scheduleList: {
     flex: 1,
-    padding: 20,
   },
   scheduleItem: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 15,
+    backgroundColor: '#fff',
+    padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f5f5f5',
+    borderBottomColor: '#e0e0e0',
+    alignItems: 'center',
   },
   scheduleTime: {
     width: 80,
-    alignItems: 'center',
+    marginRight: 12,
   },
   scheduleTimeText: {
     fontSize: 16,
@@ -386,6 +387,45 @@ const styles = StyleSheet.create({
   reminderButton: {
     padding: 8,
   },
+  scheduleSectionHeader: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  scheduleSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  allSchedleTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#092bb3ff',
+    marginBottom: 5,
+  },
+  scheduleSectionSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  alternateItem: {
+    backgroundColor: '#f9f9f9',
+  },
+  alternateText: {
+    color: '#666',
+  },
+  footer: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  footerText: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
+  },
 
   // Settings Modal
   settingsList: {
@@ -394,13 +434,14 @@ const styles = StyleSheet.create({
   },
   settingItem: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#f5f5f5',
   },
   settingInfo: {
     flex: 1,
+    marginLeft: 7
   },
   settingTitle: {
     fontSize: 16,
@@ -471,6 +512,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  carouselContainer: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  carouselImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    resizeMode: 'cover',
+  },
+  smallImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginHorizontal: 5,
+    resizeMode: 'cover',
   },
 });
 
