@@ -5,7 +5,7 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f3f3f3ff',
   },
   content: {
     flex: 1,
@@ -93,9 +93,12 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     marginTop: 2,
   },
-
+  featureSection: {
+    marginBottom: 70,
+    marginTop: 20,
+  },
   section: {
-    marginBottom: 30,
+    marginBottom: 10,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -274,22 +277,31 @@ const styles = StyleSheet.create({
 
   // Bottom Player
   bottomPlayer: {
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    paddingVertical: 8,
+    backgroundColor: 'rgba(222, 229, 236, 0.85)', // Glass effect base
+    borderRadius: 0,
+    paddingVertical: 5,
     paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backdropFilter: 'blur(70px)', // Not supported on Android; just visual hint
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   playerControls: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   controlButton: {
     width: 30,
     height: 30,
-    backgroundColor: '#efeeeeff',
+    backgroundColor: '#d2d2d2ff',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 22.5,
@@ -351,7 +363,8 @@ const styles = StyleSheet.create({
   scheduleItem: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
     alignItems: 'center',
@@ -388,7 +401,8 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   scheduleSectionHeader: {
-    padding: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -411,6 +425,8 @@ const styles = StyleSheet.create({
   },
   alternateItem: {
     backgroundColor: '#f9f9f9',
+    paddingLeft: 12,
+    paddingVertical: 3,
   },
   alternateText: {
     color: '#666',
@@ -530,6 +546,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     resizeMode: 'cover',
   },
+  floatingContainer: {
+  position: 'absolute',
+  bottom: 15,
+  left: '5%',
+  width: '90%',
+  borderRadius: 15,
+  overflow: 'hidden',
+}
+
 });
 
 export default styles;

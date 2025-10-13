@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 
 interface NowPlayingData {
@@ -14,23 +14,19 @@ interface NowPlayingData {
 
 interface Props {
   data: NowPlayingData;
+  onPress?: () => void;
 }
 
-const NowPlaying: React.FC<Props> = ({ data }) => (
+const NowPlaying: React.FC<Props> = ({ data, onPress }) => (
   <View style={styles.section}>
     <Text style={[styles.sectionTitle, { marginBottom: 5 }]}>Now Playing</Text>
-    <View style={styles.nowPlayingCard}>
+    <TouchableOpacity 
+      style={styles.nowPlayingCard} 
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
       <Image source={{ uri: data.image }} style={styles.nowPlayingImage} />
       <View style={styles.nowPlayingOverlay}>
-        {/* <View style={styles.nowPlayingHeader}>
-          {data.isLive && (
-            <View style={styles.liveIndicator}>
-              <View style={styles.liveDot} />
-              <Text style={styles.liveText}>LIVE</Text>
-            </View>
-          )}
-          {/* <Text style={styles.listenerCount}>👥 {data.listeners}</Text> 
-        </View> */}
         <View style={styles.nowPlayingInfo}>
           <Text style={styles.nowPlayingTitle}>{data.title}</Text>
           <Text style={styles.nowPlayingSubtitle}>{data.subtitle}</Text>
@@ -40,7 +36,7 @@ const NowPlaying: React.FC<Props> = ({ data }) => (
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   </View>
 );
 

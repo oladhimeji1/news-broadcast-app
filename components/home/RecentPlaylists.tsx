@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 
@@ -28,25 +29,23 @@ const getRandomImages = (count: number) => {
   }));
 };
 
-const RecentPlaylists: React.FC<Props> = ({onPress}) => {
-  const playlists = getRandomImages(10);
+const RecentPlaylists: React.FC<Props> = ({ onPress }) => {
+  const playlists = useMemo(() => getRandomImages(10), []); // 👈 only once
 
   return (
     <View style={styles.section}>
-      <TouchableOpacity onPress={onPress} >
+      <TouchableOpacity onPress={onPress}>
         <Text style={styles.allSchedleTitle}>All Schedules</Text>
-        </TouchableOpacity>
+      </TouchableOpacity>
+
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
         {playlists.map((p) => (
           <View key={p.id} style={styles.playlistItem}>
             <Image
-              source={{
-                uri: p.image + '?t=' + Date.now(), // prevent caching issues
-              }}
+              source={{ uri: p.image }}
               style={styles.playlistImage}
               resizeMode="cover"
-              // defaultSource={"https://refword.net/wp-content/uploads/2025/09/RENEWING.jpg"} // optional local fallback
-              onError={(error) => console.warn('Image failed to load:', p.image)}
+              onError={() => console.warn('Image failed to load:', p.image)}
             />
           </View>
         ))}

@@ -94,7 +94,7 @@ const FeaturedPodcasts = () => {
   };
 
   return (
-    <View style={styles.section}>
+    <View style={styles.featureSection}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Featured Programs</Text>
       </View>

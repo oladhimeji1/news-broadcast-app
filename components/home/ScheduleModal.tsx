@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Modal, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 
 interface Program {
@@ -69,6 +70,7 @@ const ALTERNATE_PROGRAMS = [
 ];
 
 const ScheduleModal: React.FC<Props> = ({ visible, onClose }) => (
+  
   <Modal animationType="slide" transparent={false} visible={visible} onRequestClose={onClose}>
     <SafeAreaView style={styles.modalContainer}>
       <View style={styles.modalHeader}>

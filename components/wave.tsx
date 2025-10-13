@@ -50,7 +50,7 @@ const AudioWaves = () => {
             width: 2,
             height: 10, // max bar height
             marginHorizontal: 1,
-            backgroundColor: "#4CAF50",
+            backgroundColor: "#007AFF",
             borderRadius: 2,
             transform: [
               {

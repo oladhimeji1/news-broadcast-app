@@ -8,26 +8,13 @@ import AnnouncementTicker from '@/components/home/AnnouncementTicker';
 import BottomPlayer from '@/components/home/BottomPlayer';
 import FeaturedPodcasts from '@/components/home/FeaturedPodcasts';
 import Header from '@/components/home/Header';
-import ListenLive from '@/components/home/ListenLive';
 import NowPlaying from '@/components/home/NowPlaying';
+import NowPlayingModal from '@/components/home/NowPlayingModal';
 import RecentPlaylists from '@/components/home/RecentPlaylists';
 import ScheduleModal from '@/components/home/ScheduleModal';
 import SettingsModal from '@/components/home/SettingsModal';
 import styles from '@/components/home/styles';
 import useRadiocult from '@/hooks/useRadiocult';
-
-interface DataType {
-  id: number | string;
-  title: string;
-  image: string;
-  streamUrl: string;
-  subtitle: string;
-  isLive: boolean;
-  show: string;
-  host: string;
-  startTime?: string;
-  endTime?: string;
-}
 
 const NewsApp = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -52,6 +39,7 @@ const NewsApp = () => {
   const [nowPlaying, setNowPlaying] = useState<any>(EMPTY_NOW_PLAYING);
   const [showSchedule, setShowSchedule] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showNowPlayingModal, setShowNowPlayingModal] = useState(false);
   const [currentAnnouncementIndex, setCurrentAnnouncementIndex] = useState(0);
   const [notifications, setNotifications] = useState(true);
   const [backgroundPlay, setBackgroundPlay] = useState(true);
@@ -63,14 +51,11 @@ const NewsApp = () => {
     apiKey: "pk_11730d4c647a423bb05f8080a8088c6c"
   });
 
-  const [recentPlaylists, setRecentPlaylists] = useState<any[]>([]);
   const [announcements, setAnnouncements] = useState<any[]>([]);
 
   // Map rcData to our state
   useEffect(() => {
     if (!rcData) return;
-    // console.log('::::::::::::::::::::::::::::::::::::::::::::::::');
-    // console.log("Newwwwww:", JSON.stringify(rcData, null, 2));
 
     const result = (rcData as any)?.raw?.result || {};
     const schedule = result.content || {};
@@ -93,23 +78,8 @@ const NewsApp = () => {
       host: metadata.artist || '',
       startTime: schedule.startDateUtc,
       endTime: schedule.endDateUtc,
+      isLive: result.status === "schedule",
     }));
-
-    // Build one-item playlist from schedule
-    // const mapped = [{
-    //   id: schedule.id,
-    //   title: schedule.title,
-    //   subtitle: metadata.title,
-    //   image: metadata.artwork?.default || '',
-    //   streamUrl,
-    //   isLive: result.status === "schedule",
-    //   show: schedule.entity || '',
-    //   host: metadata.artist || '',
-    //   startTime: schedule.startDateUtc,
-    //   endTime: schedule.endDateUtc,
-    // }];
-
-    // setRecentPlaylists(mapped);
 
     // announcements
     const rawAnnouncements =
@@ -141,6 +111,7 @@ const NewsApp = () => {
     return () => {
       if (player) {
         player.pause();
+        setIsPlaying(false);
       }
     };
   }, [player]);
@@ -150,6 +121,7 @@ const NewsApp = () => {
     try {
       if (!isPlaying) {
         await player.play();
+        setShowNowPlayingModal(true);
         setIsPlaying(true);
       } else {
         await player.pause();
@@ -167,24 +139,6 @@ const NewsApp = () => {
     if (!player) return;
     player.muted = !isMuted;
     setIsMuted(!isMuted);
-  };
-
-  // Change stream
-  const changeStream = async (streamUrl: string, title: DataType) => {
-    try {
-      if (isPlaying) {
-        await player.pause();
-        setIsPlaying(false);
-      }
-      setCurrentStream(streamUrl);
-      setNowPlaying({
-        ...title,
-        listeners: (nowPlaying && (nowPlaying as any).listeners) || '0'
-      });
-    } catch (error) {
-      console.error('changeStream error', error);
-      Alert.alert("Error", "Unable to change stream");
-    }
   };
 
   // Share
@@ -211,13 +165,33 @@ const NewsApp = () => {
     }
   };
 
-  // Reminder
-  // const setReminder = (program: any) => {
-  //   Alert.alert(
-  //     "Reminder Set",
-  //     `You'll be notified before "${program.show}" starts at ${program.time}`
-  //   );
-  // };
+  // Show info
+  const handleShowInfo = () => {
+    const formatDate = (isoString: string): string => {
+      const date = new Date(isoString);
+      return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      });
+    };
+
+    const parts = [
+      nowPlaying.show || nowPlaying.title || 'RefWord FM',
+      nowPlaying.host ? `Host: ${nowPlaying.host}` : undefined,
+      // `Listeners: ${nowPlaying.listeners || '0'}`,
+      nowPlaying.startTime ? `Start: ${formatDate(nowPlaying.startTime)}` : undefined,
+      nowPlaying.endTime ? `End: ${formatDate(nowPlaying.endTime)}` : undefined,
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    Alert.alert('Station Info', parts);
+  };
+
 
   // Refresh
   const onRefresh = () => {
@@ -245,25 +219,28 @@ const NewsApp = () => {
           <AnnouncementTicker
             text={
               (announcements[currentAnnouncementIndex] &&
-                (announcements[currentAnnouncementIndex].text ||
+                (announcements[currentAnnouncementIndex].title ||
                   announcements[currentAnnouncementIndex].message ||
-                  announcements[currentAnnouncementIndex].title)) ||
+                  announcements[currentAnnouncementIndex].text)) ||
               ''
             }
           />
         ) : nowPlaying.description ? (
-          <AnnouncementTicker text={nowPlaying.description} />
+          <AnnouncementTicker text={nowPlaying.title} />
         ) : null}
 
-        <ListenLive
+        {/* <ListenLive
           isPlaying={isPlaying}
           listeners={nowPlaying.listeners}
           onTogglePlay={handlePlayPause}
-        />
+        /> */}
 
         <RecentPlaylists onPress={() => { setShowSchedule(true); }} />
 
-        <NowPlaying data={nowPlaying} />
+        <NowPlaying 
+          data={nowPlaying} 
+          onPress={() => setShowNowPlayingModal(true)}
+        />
 
         <FeaturedPodcasts />
       </ScrollView>
@@ -274,17 +251,19 @@ const NewsApp = () => {
         isConnected={isConnected}
         onTogglePlay={handlePlayPause}
         onToggleMute={handleVolumeToggle}
-        onInfo={() => {
-          const parts = [
-            nowPlaying.show || nowPlaying.title || 'RefWord FM',
-            nowPlaying.host ? `Host: ${nowPlaying.host}` : undefined,
-            `Listeners: ${nowPlaying.listeners || '0'}`,
-            nowPlaying.startTime ? `Start: ${nowPlaying.startTime}` : undefined,
-            nowPlaying.endTime ? `End: ${nowPlaying.endTime}` : undefined,
-          ].filter(Boolean).join('\n');
+        onInfo={handleShowInfo}
+      />
 
-          Alert.alert('Station Info', parts);
-        }}
+      <NowPlayingModal
+        visible={showNowPlayingModal}
+        onClose={() => setShowNowPlayingModal(false)}
+        data={nowPlaying}
+        isPlaying={isPlaying}
+        isMuted={isMuted}
+        isConnected={isConnected}
+        onTogglePlay={handlePlayPause}
+        onToggleMute={handleVolumeToggle}
+        onInfo={handleShowInfo}
       />
 
       <ScheduleModal
