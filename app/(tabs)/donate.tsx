@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
 
   // Donate Button
   donateButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#007AFF',
     marginHorizontal: 20,
     marginTop: 30,
     borderRadius: 12,

@@ -1,7 +1,10 @@
-import { useAudioPlayer } from 'expo-audio';
-import { useEffect, useState } from 'react';
+import { Audio } from 'expo-av';
+import { useEffect, useRef, useState } from 'react';
 import { Alert, RefreshControl, ScrollView, Share, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+// import { MediaControls } from 'expo-media-controls';
+
+// import { useAudioPlayer } from 'expo-audio';
 
 // Presentational components
 import AnnouncementTicker from '@/components/home/AnnouncementTicker';
@@ -44,7 +47,8 @@ const NewsApp = () => {
   const [notifications, setNotifications] = useState(true);
   const [backgroundPlay, setBackgroundPlay] = useState(true);
 
-  const player = useAudioPlayer(currentStream);
+  // const player = useAudioPlayer(currentStream);
+  const soundRef = useRef<Audio.Sound | null>(null);
 
   // Radiocult hook
   const { data: rcData, error: rcError } = useRadiocult('refwordfm', {
@@ -106,27 +110,76 @@ const NewsApp = () => {
     return () => clearInterval(interval);
   }, [announcements]);
 
+  // Setup audio mode for background playback
+  useEffect(() => {
+    const setupAudio = async () => {
+      await Audio.setAudioModeAsync({
+        staysActiveInBackground: true,
+        playsInSilentModeIOS: true,
+        shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: false,
+      });
+    };
+    setupAudio();
+  }, []);
+
   // Cleanup
   useEffect(() => {
     return () => {
-      if (player) {
-        player.pause();
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
         setIsPlaying(false);
       }
+      // if (player) {
+      //   player.pause();
+      //   setIsPlaying(false);
+      // }
     };
-  }, [player]);
+  }, []);
 
   // Play / Pause
   const handlePlayPause = async () => {
     try {
       if (!isPlaying) {
-        await player.play();
+        if (!soundRef.current) {
+          const { sound } = await Audio.Sound.createAsync(
+            { uri: currentStream },
+            { shouldPlay: true }
+          );
+          soundRef.current = sound;
+
+          // Optional: listen for playback updates
+          soundRef.current.setOnPlaybackStatusUpdate((status) => {
+            if (status.isLoaded) {
+              if (status.didJustFinish) {
+                setIsPlaying(false);
+              }
+            } else if (status.error) {
+              console.log(`Playback error: ${status.error}`);
+              setIsConnected(false);
+            }
+          });
+        } else {
+          await soundRef.current.playAsync();
+        }
+
         setShowNowPlayingModal(true);
         setIsPlaying(true);
       } else {
-        await player.pause();
+        if (soundRef.current) {
+          await soundRef.current.pauseAsync();
+        }
         setIsPlaying(false);
       }
+
+      // if (!isPlaying) {
+      //   await player.play();
+      //   setShowNowPlayingModal(true);
+      //   setIsPlaying(true);
+      // } else {
+      //   await player.pause();
+      //   setIsPlaying(false);
+      // }
     } catch (err) {
       console.log("Stream error:", err);
       Alert.alert("Stream Error", "Unable to play stream. Please check your connection.");
@@ -134,12 +187,18 @@ const NewsApp = () => {
     }
   };
 
+
   // Mute toggle
   const handleVolumeToggle = async () => {
-    if (!player) return;
-    player.muted = !isMuted;
+    if (!soundRef.current) return;
+    await soundRef.current.setIsMutedAsync(!isMuted);
     setIsMuted(!isMuted);
+
+    // if (!player) return;
+    // player.muted = !isMuted;
+    // setIsMuted(!isMuted);
   };
+
 
   // Share
   const handleShare = async () => {
