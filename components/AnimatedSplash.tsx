@@ -53,7 +53,7 @@ export default function AnimatedSplash({ onFinish }: AnimatedSplashProps) {
       >
         <Ionicons name="radio" size={80} color="#E63946" />
         <Text style={styles.title}>RefWord FM</Text>
-        <Text style={styles.subtitle}>Your Voice, Your Choice</Text>
+        <Text style={styles.subtitle}>Reformation Radio</Text>
       </Animated.View>
     </View>
   );
