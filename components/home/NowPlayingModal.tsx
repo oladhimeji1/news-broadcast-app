@@ -51,15 +51,15 @@ const NowPlayingModal: React.FC<Props> = ({
   onInfo,
 }) => {
   return (
-    <SafeAreaView >
     <Modal
       visible={visible}
       animationType="slide"
       presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+        <View style={styles.content}>
         {/* Background Image */}
         <Image
           source={{ uri: data.image || 'https://via.placeholder.com/400' }}
@@ -149,9 +149,9 @@ const NowPlayingModal: React.FC<Props> = ({
             />
           </TouchableOpacity>
         </View>
-      </View>
+        </View>
+      </SafeAreaView>
     </Modal>
-    </SafeAreaView>
   );
 };
 
@@ -159,6 +159,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a1a1a',
+  },
+  content: {
+    flex: 1,
   },
   backgroundImage: {
     position: 'absolute',
