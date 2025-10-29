@@ -51,7 +51,7 @@ const NewsApp = () => {
   const soundRef = useRef<Audio.Sound | null>(null);
 
   // Radiocult hook
-  const { data: rcData, error: rcError } = useRadiocult('refwordfm', {
+  const { data: rcData, loading: rcLoading, error: rcError } = useRadiocult('refwordfm', {
     apiKey: "pk_11730d4c647a423bb05f8080a8088c6c"
   });
 
@@ -296,8 +296,9 @@ const NewsApp = () => {
 
         <RecentPlaylists onPress={() => { setShowSchedule(true); }} />
 
-        <NowPlaying 
-          data={nowPlaying} 
+        <NowPlaying
+          data={nowPlaying}
+          loading={rcLoading}
           onPress={() => setShowNowPlayingModal(true)}
         />
 
@@ -308,6 +309,7 @@ const NewsApp = () => {
         isPlaying={isPlaying}
         isMuted={isMuted}
         isConnected={isConnected}
+        isLoading={rcLoading}
         onTogglePlay={handlePlayPause}
         onToggleMute={handleVolumeToggle}
         onInfo={handleShowInfo}

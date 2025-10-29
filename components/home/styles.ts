@@ -553,7 +553,49 @@ const styles = StyleSheet.create({
   width: '90%',
   borderRadius: 15,
   overflow: 'hidden',
-}
+},
+
+  // Skeleton styles for NowPlaying
+  nowPlayingSkeletonImage: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#f0f0f0',
+  },
+  nowPlayingSkeletonInfoContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    padding: 15,
+  },
+  nowPlayingSkeletonTitle: {
+    height: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 4,
+    marginBottom: 6,
+    width: '80%',
+  },
+  nowPlayingSkeletonSubtitle: {
+    height: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 4,
+    marginBottom: 8,
+    width: '60%',
+  },
+  nowPlayingSkeletonShow: {
+    height: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderRadius: 4,
+    width: '45%',
+  },
+  nowPlayingSkeletonHost: {
+    height: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderRadius: 4,
+    width: '35%',
+    marginLeft: 8,
+  },
 
 });
 
