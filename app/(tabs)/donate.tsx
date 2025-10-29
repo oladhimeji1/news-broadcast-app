@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
-
+import logo from '../../assets/images/favicon.png';
 // const { width } = Dimensions.get('window');
 
 const IMPACT_STATS = [
@@ -32,7 +32,7 @@ const DonationSelection = ({
       {/* Header */}
       <View style={styles.header}>
         <Image
-          source={{ uri: "https://d4mt18vwj73wk.cloudfront.net/trackImage/338tFBQ0gaoR9mVlTuYdrIDKtSV-2025-09-24T10:40:40Z-512x512.jpg" }}
+          source={logo}
           style={styles.logo}
           resizeMode="contain"
         />
