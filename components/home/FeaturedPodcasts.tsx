@@ -13,14 +13,14 @@ interface Podcast {
 }
 
 const FALLBACK_IMAGE =
-  'https://i0.wp.com/refword.net/wp-content/uploads/2025/09/RefWord-Dot-NET-REF-RADIO.png?fit=300%2C300&ssl=1';
+  'https://refword.net/wp-content/uploads/2025/09/RefWord-Dot-Net-POWER-Black-300x300.png';
 
 const featuredPodcasts: Podcast[] = [
   {
     id: 1,
     title: 'Renewing Your Mind',
     host: 'Dr. R.C. Sproul',
-    image: 'https://i0.wp.com/refword.net/wp-content/uploads/2025/09/RENEWING.jpg?fit=300%2C300&ssl=1',
+    image: 'https://refword.net/wp-content/uploads/2025/09/RENEWING.jpg',
     streamUrl: 'https://refword.fm/stream/renewingyourmind',
     isLive: false,
   },
@@ -42,7 +42,7 @@ const featuredPodcasts: Podcast[] = [
     id: 4,
     title: 'Fresh Bread',
     host: 'Dr. Harry Reeder',
-    image: 'https://i0.wp.com/refword.net/wp-content/uploads/2025/09/FRESH-BREAD.png?fit=300%2C300&ssl=1',
+    image: 'https://refword.net/wp-content/uploads/2025/09/FRESH-BREAD.png',
     streamUrl: 'https://refword.fm/stream/freshbread',
     isLive: true,
   },
@@ -50,19 +50,19 @@ const featuredPodcasts: Podcast[] = [
     id: 5,
     title: 'Reformed Forum',
     host: 'Camden Bucey',
-    image: 'https://i0.wp.com/refword.net/wp-content/uploads/2025/09/REFORMED-FORUM.jpg?fit=300%2C300&ssl=1',
+    image: 'https://refword.net/wp-content/uploads/2025/09/REFORMED-FORUM.jpg',
   },
   {
     id: 6,
     title: 'Dr. Barnhouse & the Bible',
     host: 'Dr. Donald Grey Barnhouse',
-    image: 'https://i0.wp.com/refword.net/wp-content/uploads/2025/09/DR-BARNHOUSE.jpg?fit=300%2C300&ssl=1',
+    image: 'https://refword.net/wp-content/uploads/2025/09/DR-BARNHOUSE-300x300.jpg',
   },
   {
     id: 7,
     title: 'Truth For Life',
     host: 'Dr. Alistair Begg',
-    image: 'https://i0.wp.com/refword.net/wp-content/uploads/2025/09/TRUTH-FOR.jpg?fit=300%2C300&ssl=1',
+    image: 'https://refword.net/wp-content/uploads/2025/09/TRUTH-FOR.jpg',
     isLive: true,
   },
   {
@@ -76,13 +76,13 @@ const featuredPodcasts: Podcast[] = [
     id: 9,
     title: 'The Worm’s Eye View',
     host: 'Michael Hall',
-    image: 'https://i0.wp.com/refword.net/wp-content/uploads/2025/09/THE-WORMS-EYE-VIEW-LOGO.png?fit=300%2C300&ssl=1',
+    image: 'https://refword.net/wp-content/uploads/2025/09/THE-WORMS-EYE-VIEW-LOGO-300x300.png',
   },
   {
     id: 10,
     title: 'A Word From the Spirit',
     host: 'Pastor John Doe',
-    image: 'https://i0.wp.com/refword.net/wp-content/uploads/2025/09/AWFS.png?fit=300%2C300&ssl=1',
+    image: 'https://refword.net/wp-content/uploads/2025/09/AWFS.png',
   },
 ];
 

@@ -126,6 +126,19 @@ const SettingsModal: React.FC<Props> = ({
             <Ionicons name="chevron-forward" size={20} color="#666" />
           </TouchableOpacity>
 
+          {/* Privacy policy */}
+          <TouchableOpacity 
+            style={styles.settingItem} 
+            onPress={() => openURL('https://refword.net/privacy-policy/', 'Privacy Policy')}
+          >
+            <Ionicons name="lock-closed-outline" size={24} color="#007AFF" />
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>Privacy Policy</Text>
+              <Text style={styles.settingSubtitle}>Our commitment to your privacy</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#666" />
+          </TouchableOpacity>
+
           <View style={styles.footer}>
             <Text style={styles.footerText}>Broadcasting from the United States</Text>
             <Text style={styles.footerText}>Christian Reformation Word Broadcasting</Text>
